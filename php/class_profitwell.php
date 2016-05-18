@@ -189,7 +189,7 @@
      * @param string|ProfitWell plan value
      */
     public function SetPlanValue( $value ) {
-      $this->_plan_value = floor( floatval($value) );
+      $this->_plan_value = round( floatval($value), 2 );
     }
 
     /**
@@ -334,14 +334,15 @@
      * Update a user subscription to ProfitWell
      *
      */
-    public function Update() {
+    public function Update( $user_id ) {
       $this->_verb="POST";
       $this->_start_date = date("Y-m-d\TH:i");
-      if ( $this->_user_id == "" ) {
+      if ( $user_id == "" ) {
 	$this->_error = true;
 	$this->_message = "Update requires a ProfitWell user_id to be populated";
       } else {
-	$this->_command = "transactions/" . $this->_user_id ."/";
+	  $this->_user_id = $user_id;
+	$this->_command = "transactions/" . $user_id ."/";
 	$this->request();
       }
     }
@@ -413,7 +414,6 @@
      *
      */
     private function MakeRequest() {
-      error_log( "MakeRequest");
       $end_date = trim($this->_end_date) == "" ? "null" : "\"$this->_end_date\"";
       $s_end_date = trim($this->_end_date) == "" ? "" :	",\"end_date\": $end_date";
       $this->_request = "{
@@ -447,6 +447,7 @@
 
       $ch = curl_init();
       $url = $this->_base_url . $this->_command;
+
       curl_setopt( $ch, CURLOPT_URL, $url );
       if ( $this->_verb == "DELETE" ) curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, "DELETE" );
       curl_setopt( $ch, CURLOPT_RETURNTRANSFER, TRUE );
@@ -465,4 +466,5 @@
 
     }
   }
+
 ?>
