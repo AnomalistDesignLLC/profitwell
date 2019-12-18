@@ -55,7 +55,7 @@
      *
      * @param string $key Profitwell API key
      */
-    public function ProfitWell( $key ) {
+    public function __construct( $key ) {
       $this->_api_key = $key;
     }
 
